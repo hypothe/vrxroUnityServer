@@ -1,15 +1,38 @@
 const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
 
 const app = express();
-const port = 4242;
-const host = "192.168.40.93";
+const server = http.createServer(app);
+const io = new Server(server);
 
-app.get("/:id", (req, res) => {
-	let customObj = { userid: req.params["id"], value: 0 };
-	res.json(customObj
-	);
+const port = 4242;
+
+const EControlState = { NONE: 0, ROT_L: 1, ROT_R: 2, ROT_U: 3, ROT_D: 4, COLOR: 5 };
+
+var currentState = EControlState.NONE;
+
+app.get("/unity", (req, res) => {
+	// Unity side
+
+	// the app continuously polls the server to retrieve 
+	// the current state (rotate L/R/U/D, change color)
 });
 
-app.listen(port, () => {
+app.get("/user", (req, res) => {
+	// User side
+
+	// the user will see an HTML page with 5 buttons
+	// pressing them will change the state
+});
+
+io.on("connection", (socket) => {
+	console.log("User connected");
+	socket.on("disconnect", () => {
+		console.log("User disconnected")
+	});
+});
+
+server.listen(port, () => {
 	console.log("Server started.");
 });
