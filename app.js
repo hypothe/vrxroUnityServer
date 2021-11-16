@@ -24,6 +24,7 @@ app.get("/user", (req, res) => {
 
 	// the user will see an HTML page with 5 buttons
 	// pressing them will change the state
+	res.sendFile(__dirname + '/static/user.html')
 });
 
 io.on("connection", (socket) => {
