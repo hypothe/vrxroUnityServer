@@ -65,7 +65,8 @@
 		const socket = io();
 
 		function buttonClicked(btnName){
-			socket.emit('btnClick', btnName);
+			let msg = {name: btnName};
+			socket.emit('btnClick', msg);
 		}
 
 		socket.on('btnReply', (msg) => {
