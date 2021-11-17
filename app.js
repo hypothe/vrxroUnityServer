@@ -11,6 +11,7 @@ const port = 4242;
 const EControlState = { NONE: 0, ROT_L: 1, ROT_R: 2, ROT_U: 3, ROT_D: 4, COLOR: 5 };
 
 var currentState = EControlState.NONE;
+var btnCount = 0;
 
 app.get("/unity", (req, res) => {
 	// Unity side
@@ -29,9 +30,16 @@ app.get("/user", (req, res) => {
 
 io.on("connection", (socket) => {
 	console.log("User connected");
+
 	socket.on("disconnect", () => {
 		console.log("User disconnected")
 	});
+	// TODO: parse and save into internal status
+	socket.on("btnClick", (msg) => {
+		console.log(msg);
+		btnCount++;
+		io.emit('btnReply', btnCount);
+	})
 });
 
 server.listen(port, () => {
