@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+			h1 { text-align: center; margin: auto;}
+      body { 
+				text-align: center; 
+				margin: auto; 
+				padding-bottom: 3rem; 
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+				font-size: 24px;
+				width: 80%;
+			}
+			div { text-align: center; margin: auto; width: 60%;}
+
+			.btn-control .button {
+				margin: auto;
+				background-color: #d4f5e9; 
+				border: 3px solid rgb(35, 116, 98); 
+				border-radius: 6px;
+				color: rgb(84, 122, 103); 
+				font-size: 36px;
+				padding: 20px 20px; /* Some padding */
+				cursor: pointer; /* Pointer/hand icon */
+				width: 100%; /* Set a width if needed */
+				display: block; /* Make the buttons appear below each other */
+			}
+
+			
+			.btn-control .button:not(:last-child) {
+				border-bottom: none; /* Prevent double borders */
+			}
+			
+			/* Add a background color on hover */
+			.btn-control .button:hover {
+				background-color: #48695e;
+				color: rgb(225, 233, 224);
+			}
+			/*	Stop button */
+			.btn-control .stop-button {
+				background-color: #ff5d57;
+				border-color: #420202; 
+				color: rgb(95, 34, 29); 
+			}
+		
+			.btn-control  .stop-button:not(:last-child) {
+				border-bottom: none; 
+			}
+			.btn-control  .stop-button:hover {
+				background-color: #420202;
+				color: rgb(255, 234, 203);
+			}
+		
+			
+			@media only screen and (min-width: 600px){
+				.btn-control .button{
+					width: 40%;
+				}
+				.btn-control  .stop-button{
+					width: 40%;
+				}
+			}
+
+    </style>
+  </head>
+  <body>
+		<h1>Unity Cube Controls</h1>
+		<p>Use the following buttons to control the movement of the cube in Unity</p>
+    <div class="btn-control">
+			<button class="button" onclick="buttonClicked(this.name)" type="button" name="COLOR">Color</button>
+		</div>
+		<p id="presult">Click 0</p>
+  </body>
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		const socket = io();
+
+		const currentOrientation = {x: 0.0, y: 0.0, z: 0.0};
+
+		function handleOrientation(event){
+			currentOrientation.x = event.gamma;
+			currentOrientation.y = event.beta;
+			currentOrientation.z = event.alpha;
+
+		}
+		
+		function buttonClicked(btnName){
+			let msg = {name: btnName};
+			socket.emit('btnClick', msg);
+		}
+
+		window.addEventListener("deviceorientation", handleOrientation, true);
+
+		socket.on('btnReply', (msg) => {
+			document.getElementById('presult').innerHTML = "Click " + msg;
+		});
+		/*
+		let div = document.getElementById('div');
+		for (let btn of div.children){
+		}
+		*/
+	</script>
+</html>
