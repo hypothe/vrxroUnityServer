@@ -10,8 +10,8 @@ const port = 4242;
 
 const EControlState = { NONE: 'NONE', ROT_L: 'ROT_L', ROT_R: 'ROT_R', ROT_U: 'ROT_U', ROT_D: 'ROT_D', COLOR: 'COLOR', RESET: 'RESET'  };
 
-var currentState = EControlState.NONE;
-var btnCount = 0;
+var currentState = { state: EControlState.NONE, id: 0 };
+//var btnCount = 0;
 
 // Unity side
 
@@ -19,7 +19,7 @@ var btnCount = 0;
 // the current state (rotate L/R/U/D, change color)
 app.get("/unity", (req, res) => {
 	// console.log("Unity request.")
-	res.send(currentState);
+	res.json(currentState);
 });
 
 // User side
@@ -43,17 +43,17 @@ io.on("connection", (socket) => {
 	});
 
 	socket.on("btnClick", (msg) => {
-		btnCount++;
+		currentState.id++;
 		
 		if (msg.name in EControlState) {
-			currentState = EControlState[msg.name];
+			currentState.state = EControlState[msg.name];
 		}
 		else {
-			currentState = EControlState.NONE;
+			currentState.state = EControlState.NONE;
 		}
-		console.log(currentState);
+		console.log(currentState.state);
 
-		io.emit('btnReply', btnCount);
+		io.emit('btnReply', currentState.id);
 	})
 });
 
