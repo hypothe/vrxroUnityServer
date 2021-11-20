@@ -12,7 +12,7 @@ const EControlState = { NONE: 'NONE', ROT_L: 'ROT_L', ROT_R: 'ROT_R', ROT_U: 'RO
 
 
 //const currentCommand = {x: 0.0, y: 0.0, z: 0.0};
-const currentState = { state: EControlState.NONE, id: 0, orientation: {x: 0.0, y: 0.0, z: 0.0} };
+const currentState = { state: EControlState.NONE, id: 0, orientation: {alpha: 0.0, beta: 0.0, gamma: 0.0} };
 //var btnCount = 0;
 
 // Unity side
@@ -61,9 +61,11 @@ io.on("connection", (socket) => {
 	socket.on("deviceOrientation", (msg) => {
 		// take the components and update
 		// currentState.orientation
-		currentState.orientation.x = msg.x;
-		currentState.orientation.y = msg.y;
-		currentState.orientation.z = msg.z;
+		currentState.orientation.alpha = msg.alpha;
+		currentState.orientation.beta = msg.beta;
+		currentState.orientation.gamma = msg.gamma;
+
+		
 	})
 });
 

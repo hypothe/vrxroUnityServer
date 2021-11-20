@@ -83,18 +83,18 @@
 	<script>
 		const socket = io();
 
-		const currentOrientation = {x: 0.0, y: 0.0, z: 0.0};
+		const currentOrientation = {alpha: 0.0, beta: 0.0, gamma: 0.0};
 
 		var outputOrientation = document.querySelector('.orientation');
 
 		function handleOrientation(event){
-			currentOrientation.x = event.gamma;
-			currentOrientation.y = event.beta;
-			currentOrientation.z = event.alpha;
+			currentOrientation.alpha = event.alpha;
+			currentOrientation.beta = event.beta;
+			currentOrientation.gamma = event.gamma;
 
-			outputOrientation.textContent = 	`x: ${currentOrientation.x}\n`;
-			outputOrientation.textContent += 	`y: ${currentOrientation.y}\n`;
-			outputOrientation.textContent += 	`z: ${currentOrientation.z}\n`;
+			outputOrientation.textContent = 	`alpha: ${currentOrientation.alpha}\n`;
+			outputOrientation.textContent += 	`beta: ${currentOrientation.beta}\n`;
+			outputOrientation.textContent += 	`gamma: ${currentOrientation.gamma}\n`;
 
 			socket.emit('deviceOrientation', currentOrientation);
 		}
