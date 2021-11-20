@@ -67,6 +67,7 @@
 
     </style>
   </head>
+
   <body>
 		<h1>Unity Cube Controls</h1>
 		<p>Use the following buttons to control the movement of the cube in Unity</p>
@@ -74,18 +75,28 @@
 			<button class="button" onclick="buttonClicked(this.name)" type="button" name="COLOR">Color</button>
 		</div>
 		<p id="presult">Click 0</p>
+
+		<pre class="orientation"></pre>
   </body>
+
 	<script src="/socket.io/socket.io.js"></script>
 	<script>
 		const socket = io();
 
 		const currentOrientation = {x: 0.0, y: 0.0, z: 0.0};
 
+		var outputOrientation = document.querySelector('.orientation');
+
 		function handleOrientation(event){
 			currentOrientation.x = event.gamma;
 			currentOrientation.y = event.beta;
 			currentOrientation.z = event.alpha;
 
+			outputOrientation.textContent = 	`x: ${currentOrientation.x}\n`;
+			outputOrientation.textContent += 	`y: ${currentOrientation.y}\n`;
+			outputOrientation.textContent += 	`z: ${currentOrientation.z}\n`;
+
+			socket.emit('deviceOrientation', currentOrientation);
 		}
 		
 		function buttonClicked(btnName){
