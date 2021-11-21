@@ -84,13 +84,22 @@
 		const socket = io();
 
 		const currentOrientation = {alpha: 0.0, beta: 0.0, gamma: 0.0};
+		const initialOrientation = {alpha: 0.0, beta: 0.0, gamma: 0.0};
 
 		var outputOrientation = document.querySelector('.orientation');
 
+		function setOriginOrientation(event){
+			// Get the original value at login to hold a relative reference
+			initialOrientation.alpha = event.alpha;
+			initialOrientation.beta = event.beta;
+			initialOrientation.gamma = event.gamma;
+		}
+
 		function handleOrientation(event){
-			currentOrientation.alpha = event.alpha;
-			currentOrientation.beta = event.beta;
-			currentOrientation.gamma = event.gamma;
+			// Compute orientation relative to startin one
+			currentOrientation.alpha = event.alpha - initialOrientation.alpha;
+			currentOrientation.beta = event.beta - initialOrientation.beta;
+			currentOrientation.gamma = event.gamma -initialOrientation.gamma;
 
 			outputOrientation.textContent = 	`alpha: ${currentOrientation.alpha}\n`;
 			outputOrientation.textContent += 	`beta: ${currentOrientation.beta}\n`;
@@ -103,8 +112,15 @@
 			let msg = {name: btnName};
 			socket.emit('btnClick', msg);
 		}
-
-		window.addEventListener("deviceorientation", handleOrientation, true);
+		// Only if the orientation is available
+		if (window.DeviceOrientationEvent)
+		{
+			window.addEventListener("deviceorientation", setOriginOrientation, false);
+			setTimeout(() => {
+				window.removeEventListener("deviceorientation", setOriginOrientation, false);
+				window.addEventListener("deviceorientation", handleOrientation, true);
+			}, 100);
+		}
 
 		socket.on('btnReply', (msg) => {
 			document.getElementById('presult').innerHTML = "Click " + msg;
