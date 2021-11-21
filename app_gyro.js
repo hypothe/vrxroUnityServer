@@ -1,9 +1,15 @@
 const express = require("express");
-const http = require("http");
+const https = require("https");
+const fs = require("fs");
 const { Server } = require("socket.io");
 
 const app = express();
-const server = http.createServer(app);
+// psswd: UnityCubeControl
+const options = {
+	key: fs.readFileSync('server.key'),
+	cert: fs.readFileSync('server.cert')
+};
+const server = https.createServer(options, app);
 const io = new Server(server);
 
 const port = 4242;
