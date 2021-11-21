@@ -73,10 +73,12 @@
 		<p>Use the following buttons to control the movement of the cube in Unity</p>
     <div class="btn-control">
 			<button class="button" onclick="buttonClicked(this.name)" type="button" name="COLOR">Color</button>
+			<button class="button stop-button" onclick="resetOrientation()" type="button" name="RESET">Reset</button>
 		</div>
 		<p id="presult">Click 0</p>
 
 		<pre class="orientation"></pre>
+		<pre class="initOrientation"></pre>
   </body>
 
 	<script src="/socket.io/socket.io.js"></script>
@@ -87,19 +89,34 @@
 		const initialOrientation = {alpha: 0.0, beta: 0.0, gamma: 0.0};
 
 		var outputOrientation = document.querySelector('.orientation');
+		var initOutputOrientation = document.querySelector('.initOrientation');
+
+		function resetOrientation(){
+			window.removeEventListener("deviceorientation", handleOrientation, true);
+			window.addEventListener("deviceorientation", setOriginOrientation, false);
+			
+			setTimeout(() => {
+				window.removeEventListener("deviceorientation", setOriginOrientation, false);
+				window.addEventListener("deviceorientation", handleOrientation, true);
+			}, 1000);
+		}
 
 		function setOriginOrientation(event){
 			// Get the original value at login to hold a relative reference
 			initialOrientation.alpha = event.alpha;
 			initialOrientation.beta = event.beta;
 			initialOrientation.gamma = event.gamma;
+
+			initOutputOrientation.textContent = 	`init_alpha: ${initialOrientation.alpha}\n`;
+			initOutputOrientation.textContent += 	`init_beta: ${initialOrientation.beta}\n`;
+			initOutputOrientation.textContent += 	`init_gamma: ${initialOrientation.gamma}\n`;
 		}
 
 		function handleOrientation(event){
 			// Compute orientation relative to startin one
-			currentOrientation.alpha = event.alpha - initialOrientation.alpha;
-			currentOrientation.beta = event.beta - initialOrientation.beta;
-			currentOrientation.gamma = event.gamma -initialOrientation.gamma;
+			currentOrientation.alpha = (360 + event.alpha - initialOrientation.alpha)%360;
+			currentOrientation.beta = (180 + event.beta - initialOrientation.beta)%360 -180;
+			currentOrientation.gamma = (180 + event.gamma - initialOrientation.gamma)%360 - 180;
 
 			outputOrientation.textContent = 	`alpha: ${currentOrientation.alpha}\n`;
 			outputOrientation.textContent += 	`beta: ${currentOrientation.beta}\n`;
@@ -119,7 +136,7 @@
 			setTimeout(() => {
 				window.removeEventListener("deviceorientation", setOriginOrientation, false);
 				window.addEventListener("deviceorientation", handleOrientation, true);
-			}, 100);
+			}, 1000);
 		}
 
 		socket.on('btnReply', (msg) => {

@@ -4,6 +4,7 @@ const fs = require("fs");
 const { Server } = require("socket.io");
 
 const app = express();
+app.use(express.static('static'));
 // psswd: UnityCubeControl
 const options = {
 	key: fs.readFileSync('server.key'),
@@ -35,7 +36,7 @@ app.get("/unity", (req, res) => {
 // the user will see an HTML page with 5 buttons
 // pressing them will change the state
 app.get("/user", (req, res) => {
-	res.sendFile(__dirname + '/static/user_gyro.html')
+	res.sendFile(__dirname + '/static/user_gyro2.html');
 });
 
 // The socket receives an message each time an event is
@@ -44,6 +45,8 @@ app.get("/user", (req, res) => {
 // The 'name' of the last button pressed is saved as the
 // current status
 io.on("connection", (socket) => {
+	currentState.state = EControlState.NONE;
+	currentState.id = 0;
 	console.log("User connected");
 
 	socket.on("disconnect", () => {
@@ -70,8 +73,6 @@ io.on("connection", (socket) => {
 		currentState.orientation.alpha = msg.alpha;
 		currentState.orientation.beta = msg.beta;
 		currentState.orientation.gamma = msg.gamma;
-
-		
 	})
 });
 
